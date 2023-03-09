@@ -3,9 +3,10 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const GUILD_NAME = "Ключик в дурку";
-const SERVER_NAME = "Howling Fjord";
+const SERVER_NAME = "Howling-Fjord";
 const REGION = "eu"; // or "us" for US servers
-const API_URL = `https://raider.io/api/v1/guilds/profile?region=${REGION}&realm=${SERVER_NAME}&name=${GUILD_NAME}`;
+const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&realm=${SERVER_NAME}&name=${GUILD_NAME}`;
+const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
 
 // add this middleware to allow requests from any domain
 app.use(function (req, res, next) {
@@ -17,7 +18,7 @@ app.use(function (req, res, next) {
 app.get("/guild-members", async (req, res) => {
   try {
     const fetch = await import("node-fetch");
-    const response = await fetch.default(API_URL + "&fields=members");
+    const response = await fetch.default(GUILD_API + "&fields=members");
     const data = await response.json();
     res.send(data.members);
   } catch (error) {
@@ -26,11 +27,42 @@ app.get("/guild-members", async (req, res) => {
   }
 });
 
+// Endpoint to fetch a specific guild member
+app.get("/guild-members/:name", async (req, res) => {
+  try {
+    const memberName = encodeURIComponent(req.params.name);
+    const fetch = await import("node-fetch");
+    const response = await fetch.default(PLAYER_API + `&name=${memberName}`);
+    const data = await response.json();
+    res.send(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch guild member" });
+  }
+});
+
+// Endpoint to fetch current Mythic+ affixes
+app.get("/mythic-affixes", async (req, res) => {
+  try {
+    const fetch = await import("node-fetch");
+    const response = await fetch.default(
+      "https://raider.io/api/v1/mythic-plus/affixes?region=eu"
+    );
+    const data = await response.json();
+    res.send(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch Mythic+ affixes" });
+  }
+});
+
 // Endpoint to fetch guild raid progression
 app.get("/guild", async (req, res) => {
   try {
     const fetch = await import("node-fetch");
-    const response = await fetch.default(API_URL + "&fields=raid_progression");
+    const response = await fetch.default(
+      GUILD_API + "&fields=raid_progression"
+    );
     const data = await response.json();
     res.send(data);
   } catch (error) {
