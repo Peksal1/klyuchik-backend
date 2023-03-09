@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3001;
 
 const GUILD_NAME = "Ключик в дурку";
 const SERVER_NAME = "Howling-Fjord";
@@ -51,7 +51,7 @@ app.get("/online-users", async (req, res) => {
       `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/members`,
       {
         headers: {
-          Authorization: `Bot ${BOT_TOKEN}`,
+          Authorization: `Bot ${encodeURIComponent(BOT_TOKEN)}`,
         },
       }
     );
@@ -71,7 +71,7 @@ app.get("/server-stats", async (req, res) => {
       `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`,
       {
         headers: {
-          Authorization: `Bot ${BOT_TOKEN}`,
+          Authorization: `Bot ${encodeURIComponent(BOT_TOKEN)}`,
         },
       }
     );
