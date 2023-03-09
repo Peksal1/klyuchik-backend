@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+require("dotenv").config();
 const PORT = process.env.PORT || 3002;
 
 const GUILD_NAME = "Ключик в дурку";
@@ -7,8 +8,7 @@ const SERVER_NAME = "Howling-Fjord";
 const REGION = "eu"; // or "us" for US servers
 const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&realm=${SERVER_NAME}&name=${GUILD_NAME}`;
 const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
-const BOT_TOKEN =
-  "MTA4MzM3NDM0NjQxMzgyMjAwMw.GzDfJz.KccoDjapLEIEcOzoRKSPfzVUyFMJJAZ-3gGd0c";
+const BOT_TOKEN = process.env.BOT_TOKEN;
 const DISCORD_GUILD_ID = "712008432944939182";
 
 // add this middleware to allow requests from any domain
