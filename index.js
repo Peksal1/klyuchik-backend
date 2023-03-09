@@ -51,7 +51,7 @@ app.get("/online-users", async (req, res) => {
       `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/members`,
       {
         headers: {
-          Authorization: `Bot ${encodeURIComponent(BOT_TOKEN)}`,
+          Authorization: `Bot ${BOT_TOKEN}`,
         },
       }
     );
@@ -71,7 +71,7 @@ app.get("/server-stats", async (req, res) => {
       `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`,
       {
         headers: {
-          Authorization: `Bot ${encodeURIComponent(BOT_TOKEN)}`,
+          Authorization: `Bot ${BOT_TOKEN}`,
         },
       }
     );
