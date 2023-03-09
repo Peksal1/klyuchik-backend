@@ -1,12 +1,15 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 const GUILD_NAME = "Ключик в дурку";
 const SERVER_NAME = "Howling-Fjord";
 const REGION = "eu"; // or "us" for US servers
 const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&realm=${SERVER_NAME}&name=${GUILD_NAME}`;
 const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
+const BOT_TOKEN =
+  "MTA4MzM3NDM0NjQxMzgyMjAwMw.GzDfJz.KccoDjapLEIEcOzoRKSPfzVUyFMJJAZ-3gGd0c";
+const DISCORD_GUILD_ID = "712008432944939182";
 
 // add this middleware to allow requests from any domain
 app.use(function (req, res, next) {
@@ -38,6 +41,45 @@ app.get("/guild-members/:name", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Failed to fetch guild member" });
+  }
+});
+
+app.get("/online-users", async (req, res) => {
+  try {
+    const fetch = await import("node-fetch");
+    const response = await fetch.default(
+      `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/members`,
+      {
+        headers: {
+          Authorization: `Bot ${BOT_TOKEN}`,
+        },
+      }
+    );
+    const data = await response.json();
+    res.send(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch online users" });
+  }
+});
+
+// Endpoint to fetch server stats
+app.get("/server-stats", async (req, res) => {
+  try {
+    const fetch = await import("node-fetch");
+    const response = await fetch.default(
+      `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`,
+      {
+        headers: {
+          Authorization: `Bot ${BOT_TOKEN}`,
+        },
+      }
+    );
+    const data = await response.json();
+    res.send(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch server stats" });
   }
 });
 
