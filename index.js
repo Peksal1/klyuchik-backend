@@ -38,6 +38,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+// Endpoint to register a new user
 app.post("/register", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -72,6 +73,9 @@ app.post("/register", async (req, res) => {
             return;
           }
 
+          res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+          res.setHeader("Access-Control-Allow-Methods", "POST");
+          res.setHeader("Access-Control-Allow-Headers", "Content-Type");
           res.send({ message: "User registered successfully" });
         }
       );
@@ -80,14 +84,6 @@ app.post("/register", async (req, res) => {
     console.error(error);
     res.status(500).send({ error: "Failed to register user" });
   }
-});
-
-// Set the CORS headers for all responses
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  next();
 });
 
 app.post("/login", async (req, res) => {
