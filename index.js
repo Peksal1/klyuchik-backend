@@ -144,7 +144,7 @@ app.post("/login", async (req, res) => {
       }
 
       // User is authenticated, generate and return an access token
-      const token = generateAccessToken(results[0].id, results[0].role);
+      const token = authenticateToken(results[0].id, results[0].role);
       res.send({ token });
     });
   } catch (error) {
@@ -187,7 +187,34 @@ app.get("/user", authenticateToken, async (req, res) => {
     res.status(500).send({ error: "Failed to retrieve user data" });
   }
 });
+app.get("/me", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
 
+    // Get the user information from the database
+    const userSql = `
+      SELECT id, name, email, role FROM users WHERE id = ?;
+    `;
+    connection.query(userSql, [userId], (error, results, fields) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to get user information" });
+        return;
+      }
+
+      if (results.length === 0) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      const user = results[0];
+      res.json(user);
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to get user information" });
+  }
+});
 // Endpoint to fetch guild members
 app.get("/guild-members", async (req, res) => {
   try {
