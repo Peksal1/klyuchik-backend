@@ -57,12 +57,12 @@ app.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Invalid email address" });
     }
 
-    // if (!isValidPassword(password)) {
-    //   return res.status(400).json({
-    //     error:
-    //       "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number",
-    //   });
-    // }
+    if (!isValidPassword(password)) {
+      return res.status(400).json({
+        error:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number",
+      });
+    }
 
     // Check if the email is already registered
     const emailCheckSql = `
@@ -110,11 +110,11 @@ function isValidEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
-// function isValidPassword(password) {
-//   // password validation
-//   const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-//   return re.test(String(password));
-// }
+function isValidPassword(password) {
+  // password validation
+  const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+  return re.test(String(password));
+}
 // Set the CORS headers for all responses
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
