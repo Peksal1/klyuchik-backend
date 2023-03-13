@@ -16,14 +16,6 @@ connection.connect(function (err) {
   console.log("connected as id " + connection.threadId);
 });
 
-const corsOptions = {
-  origin: ["http://localhost:3000", "https://www.klyuchik.net/"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.use(cors(corsOptions));
-
 const GUILD_NAME = "Ключик в дурку";
 const SERVER_NAME = "Howling-Fjord";
 const REGION = "eu"; // or "us" for US servers
@@ -73,9 +65,6 @@ app.post("/register", async (req, res) => {
             return;
           }
 
-          res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-          res.setHeader("Access-Control-Allow-Methods", "POST");
-          res.setHeader("Access-Control-Allow-Headers", "Content-Type");
           res.send({ message: "User registered successfully" });
         }
       );
