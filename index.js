@@ -9,7 +9,7 @@ const REGION = "eu"; // or "us" for US servers
 const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&realm=${SERVER_NAME}&name=${GUILD_NAME}`;
 const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const DISCORD_GUILD_ID = 712008432944939182;
+const DISCORD_GUILD_ID = "712008432944939182";
 
 // add this middleware to allow requests from any domain
 app.use(function (req, res, next) {
