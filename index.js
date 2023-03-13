@@ -4,7 +4,9 @@ const { authenticateToken } = require("./auth"); // import the middleware functi
 require("dotenv").config();
 const PORT = process.env.PORT || 3001;
 const mysql = require("mysql");
+const cors = require("cors");
 
+app.use(cors());
 const connection = mysql.createConnection(process.env.JAWSDB_URL);
 
 connection.connect(function (err) {
