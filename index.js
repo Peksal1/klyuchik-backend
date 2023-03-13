@@ -123,35 +123,35 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.post("/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-//     // Check if the email and password match a registered user
-//     const loginSql = `
-//       SELECT * FROM users WHERE email = ? AND password = ?;
-//     `;
-//     connection.query(loginSql, [email, password], (error, results, fields) => {
-//       if (error) {
-//         console.error(error);
-//         res.status(500).send({ error: "Failed to log in user" });
-//         return;
-//       }
+    // Check if the email and password match a registered user
+    const loginSql = `
+      SELECT * FROM users WHERE email = ? AND password = ?;
+    `;
+    connection.query(loginSql, [email, password], (error, results, fields) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send({ error: "Failed to log in user" });
+        return;
+      }
 
-//       if (results.length === 0) {
-//         res.status(400).send({ error: "Incorrect email or password" });
-//         return;
-//       }
+      if (results.length === 0) {
+        res.status(400).send({ error: "Incorrect email or password" });
+        return;
+      }
 
-//       // User is authenticated, generate and return an access token
-//       const token = authenticateToken(results[0].id, results[0].role);
-//       res.send({ token });
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send({ error: "Failed to log in user" });
-//   }
-// });
+      // User is authenticated, generate and return an access token
+      const token = authenticateToken(results[0].id, results[0].role);
+      res.send({ token });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to log in user" });
+  }
+});
 // Endpoint to get the current logged in user
 app.get("/user", authenticateToken, async (req, res) => {
   try {
