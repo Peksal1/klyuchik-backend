@@ -5,13 +5,8 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3001;
 const mysql = require("mysql");
 const cors = require("cors");
-const bodyParser = require("body-parser");
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors());
-
 const connection = mysql.createConnection(process.env.JAWSDB_URL);
 
 connection.connect(function (err) {
@@ -44,25 +39,10 @@ app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   next();
 });
-// register endpoint
+
 app.post("/register", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ error: "Missing required field(s)" });
-    }
-
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ error: "Invalid email address" });
-    }
-
-    if (!isValidPassword(password)) {
-      return res.status(400).json({
-        error:
-          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number",
-      });
-    }
 
     // Check if the email is already registered
     const emailCheckSql = `
@@ -71,12 +51,12 @@ app.post("/register", async (req, res) => {
     connection.query(emailCheckSql, [email], (error, results, fields) => {
       if (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to register user" });
+        res.status(500).send({ error: "Failed to register user" });
         return;
       }
 
       if (results.length > 0) {
-        res.status(400).json({ error: "Email already registered" });
+        res.status(400).send({ error: "Email already registered" });
         return;
       }
 
@@ -90,31 +70,20 @@ app.post("/register", async (req, res) => {
         (error, results, fields) => {
           if (error) {
             console.error(error);
-            res.status(500).json({ error: "Failed to register user" });
+            res.status(500).send({ error: "Failed to register user" });
             return;
           }
 
-          res.json({ message: "User registered successfully" });
+          res.send({ message: "User registered successfully" });
         }
       );
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to register user" });
+    res.status(500).send({ error: "Failed to register user" });
   }
 });
 
-function isValidEmail(email) {
-  // basic email validation using regular expression
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(String(email).toLowerCase());
-}
-
-function isValidPassword(password) {
-  // password validation
-  const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-  return re.test(String(password));
-}
 // Set the CORS headers for all responses
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
