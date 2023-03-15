@@ -51,7 +51,7 @@ app.get("/guild-members/weekly-keys/:name", async (req, res) => {
     const fetch = await import("node-fetch");
     const response = await fetch.default(
       PLAYER_API +
-        `&fields=mythic_plus_weekly_highest_level_runs` +
+        `&fields=mythic_plus_weekly_highest_level_runs,mythic_plus_scores_by_season:current,raid_progression` +
         `&name=${memberName}`
     );
     const data = await response.json();
