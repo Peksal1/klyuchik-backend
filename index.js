@@ -44,6 +44,26 @@ app.get("/guild-members/:name", async (req, res) => {
   }
 });
 
+// Endpoint to fetch a specific guild members weekly keys
+app.get("/guild-members/weekly-keys/:name", async (req, res) => {
+  try {
+    const memberName = encodeURIComponent(req.params.name);
+    const fetch = await import("node-fetch");
+    const response = await fetch.default(
+      PLAYER_API +
+        `&name=${memberName}` +
+        "fields=mythic_plus_weekly_highest_level_runs"
+    );
+    const data = await response.json();
+    res.send(data);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ error: "Failed to fetch guild members weekly keys" });
+  }
+});
+
 app.get("/online-users", async (req, res) => {
   try {
     const fetch = await import("node-fetch");
