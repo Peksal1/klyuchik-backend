@@ -69,14 +69,11 @@ app.post(
       // Check if user already exists
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "User already exists" }] });
+        return res.status(400).json({ error: "User already exists" });
       }
 
       // Hash password
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(password, salt);
+      const hashedPassword = bcrypt.hashSync(password, 10);
 
       // Create user
       const user = await User.create({
@@ -93,7 +90,7 @@ app.post(
       res.json({ token });
     } catch (error) {
       console.error(error);
-      res.status(500).send({ error: "Server error" });
+      res.status(500).send({ error: "Error creating user" });
     }
   }
 );
