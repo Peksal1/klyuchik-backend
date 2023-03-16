@@ -15,7 +15,11 @@ const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&real
 const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const DISCORD_GUILD_ID = "712008432944939182";
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://www.klyuchik.net",
+  })
+);
 const sequelize = new Sequelize(process.env.JAWSDB_URL, {
   dialect: "mysql",
 });
