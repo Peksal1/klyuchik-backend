@@ -50,13 +50,13 @@ sequelize.sync();
 // Register user
 app.post(
   "/register",
-  [
-    check("name").notEmpty(),
-    check("email").isEmail(),
-    check("password").isLength({ min: 6 }),
-    check("role").notEmpty(),
-    check("wow_nickname").notEmpty(),
-  ],
+  // [
+  //   check("name").notEmpty(),
+  //   check("email").isEmail(),
+  //   check("password").isLength({ min: 6 }),
+  //   check("role").notEmpty(),
+  //   check("wow_nickname").notEmpty(),
+  // ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
