@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { check, validationResult } = require("express-validator");
 const { Sequelize } = require("sequelize");
+const cors = require("cors");
 
 const GUILD_NAME = "Ключик в дурку";
 const SERVER_NAME = "Howling-Fjord";
