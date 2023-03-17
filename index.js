@@ -91,6 +91,9 @@ app.post(
       // Create JWT token
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
 
+      // Add Access-Control-Allow-Origin header with the value of the requesting domain
+      res.setHeader("Access-Control-Allow-Origin", "https://www.klyuchik.net");
+
       res.json({ token });
     } catch (error) {
       console.error(error);
