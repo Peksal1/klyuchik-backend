@@ -176,12 +176,6 @@ app.get("/user", authenticateToken, async (req, res) => {
   }
 });
 
-// Protected endpoint to get current user info
-app.get("/me", authenticateUser, (req, res) => {
-  const { name, email, role, wow_nickname } = req.user;
-  res.json({ name, email, role, wow_nickname });
-});
-
 // add this middleware to allow requests from any domain
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
