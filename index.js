@@ -175,6 +175,18 @@ function authenticateToken(req, res, next) {
   });
 }
 
+app.post("/logout", authenticateToken, async (req, res) => {
+  try {
+    // Remove token from client-side
+    res.clearCookie("token");
+
+    res.json({ message: "Logout successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error logging out user" });
+  }
+});
+
 // Endpoint to create Boosting
 app.post("/boosting", authenticateToken, async (req, res) => {
   // Check if user is admin
