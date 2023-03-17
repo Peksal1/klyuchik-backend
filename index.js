@@ -46,6 +46,7 @@ const User = sequelize.define("User", {
   wow_nickname: {
     type: Sequelize.STRING,
     allowNull: false,
+    unique: true,
   },
 });
 
@@ -78,6 +79,11 @@ app.post(
         return res.status(400).json({ error: "User already exists" });
       }
 
+      // Check if user already exists
+      const existingNickname = await User.findOne({ where: { wow_nickname } });
+      if (existingNickname) {
+        return res.status(400).json({ error: "Character already exists" });
+      }
       // Hash password
       const hashedPassword = bcrypt.hashSync(password, 10);
 
@@ -104,57 +110,71 @@ app.post(
   }
 );
 
-// Login endpoint
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check if user exists
+    // Find user by email
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(400).json({ error: "Invalid email or password" });
     }
 
     // Verify password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ error: "Invalid credentials" });
+    const validPassword = bcrypt.compareSync(password, user.password);
+    if (!validPassword) {
+      return res.status(400).json({ error: "Invalid email or password" });
     }
 
     // Create JWT token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
 
-    // Set JWT token in cookie
-    res.cookie("token", token, { httpOnly: true });
+    // Add Access-Control-Allow-Origin header with the value of the requesting domain
+    res.setHeader("Access-Control-Allow-Origin", "https://www.klyuchik.net");
 
-    res.json({ message: "Login successful" });
+    res.json({ token });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Server error" });
+    res.status(500).send({ error: "Error logging in user" });
   }
 });
 
-// Middleware function to verify JWT token
-const authenticateUser = async (req, res, next) => {
-  const token = req.cookies.token;
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401).send({ error: "Unauthorized" });
+  }
 
+  jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+    if (error) {
+      return res.status(401).send({ error: "Unauthorized" });
+    }
+    req.userId = decoded.userId;
+    next();
+  });
+}
+
+app.get("/user", authenticateToken, async (req, res) => {
   try {
-    if (!token) {
-      throw new Error();
+    // Find user by id
+    const user = await User.findOne({ where: { id: req.userId } });
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
     }
 
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    // Remove sensitive data from user object
+    const { password, ...userInfo } = user.toJSON();
 
-    // Attach user object to request
-    const user = await User.findOne({ where: { id: decodedToken.userId } });
-    req.user = user;
+    // Add Access-Control-Allow-Origin header with the value of the requesting domain
+    res.setHeader("Access-Control-Allow-Origin", "https://www.klyuchik.net");
 
-    next();
+    res.json(userInfo);
   } catch (error) {
     console.error(error);
-    res.status(401).send({ error: "Unauthorized" });
+    res.status(500).send({ error: "Error getting user info" });
   }
-};
+});
 
 // Protected endpoint to get current user info
 app.get("/me", authenticateUser, (req, res) => {
