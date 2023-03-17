@@ -62,7 +62,7 @@ app.post(
     check("wow_nickname").notEmpty(),
   ],
   async (req, res) => {
-    console.log(req);
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
