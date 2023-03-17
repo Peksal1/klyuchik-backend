@@ -50,6 +50,26 @@ const User = sequelize.define("User", {
   },
 });
 
+const Boosting = sequelize.define("Boosting", {
+  price: {
+    type: Sequelize.NUMBER,
+    allowNull: false,
+  },
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  category: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
 // Sync User model with database
 sequelize.sync();
 
@@ -154,6 +174,41 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+
+// Endpoint to create Boosting
+app.post("/boosting", authenticateToken, async (req, res) => {
+  // Check if user is admin
+  const user = await User.findOne({ where: { id: req.userId } });
+  if (user.role !== "admin") {
+    return res.status(403).send({ error: "Unauthorized" });
+  }
+
+  // Create Boosting
+  try {
+    const { price, title, description, category } = req.body;
+    const boosting = await Boosting.create({
+      price,
+      title,
+      description,
+      category,
+    });
+    res.json(boosting);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error creating Boosting" });
+  }
+});
+
+// Endpoint to get all Boosting
+app.get("/boosting", async (req, res) => {
+  try {
+    const boosting = await Boosting.findAll();
+    res.json(boosting);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error getting Boosting" });
+  }
+});
 
 app.get("/user", authenticateToken, async (req, res) => {
   try {
