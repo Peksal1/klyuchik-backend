@@ -7,7 +7,8 @@ const bcrypt = require("bcrypt");
 const { check, validationResult } = require("express-validator");
 const { Sequelize } = require("sequelize");
 const cors = require("cors");
-
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
 const GUILD_NAME = "Ключик в дурку";
 const SERVER_NAME = "Howling-Fjord";
 const REGION = "eu"; // or "us" for US servers
