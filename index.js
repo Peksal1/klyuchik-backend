@@ -52,7 +52,7 @@ const User = sequelize.define("User", {
 
 const Boosting = sequelize.define("Boosting", {
   price: {
-    type: Sequelize.NUMBER,
+    type: Sequelize.DECIMAL,
     allowNull: false,
   },
   title: {
