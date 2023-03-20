@@ -92,16 +92,7 @@ passport.use(
     },
     (accessToken, refreshToken, profile, done) => {
       // Find or create the user based on the Bnet profile data
-      User.findOrCreate({
-        where: { bnetId: profile.id },
-        defaults: {
-          name: profile.displayName,
-          role: "user",
-        },
-      }).then(([user, created]) => {
-        // Call done with the authenticated user object
-        done(null, user);
-      });
+      // Call done with the authenticated user object
     }
   )
 );
@@ -111,12 +102,14 @@ app.get("/auth/bnet", passport.authenticate("bnet"));
 app.get(
   "/auth/bnet/callback",
   passport.authenticate("bnet", {
-    successRedirect: "/",
     failureRedirect: "/login",
   }),
   (req, res) => {
-    // redirect the user back to the React client with the authenticated user data
-    res.redirect(`https://www.klyuchik.net/user/${req.user.id}`);
+    // Save the user's access token in local storage
+    localStorage.setItem("bnetToken", req.user.token);
+
+    // Redirect the user back to the React client without query parameters
+    res.redirect("https://www.klyuchik.net/user");
   }
 );
 
