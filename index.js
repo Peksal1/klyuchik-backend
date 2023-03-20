@@ -15,6 +15,8 @@ const REGION = "eu"; // or "us" for US servers
 const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&realm=${SERVER_NAME}&name=${GUILD_NAME}`;
 const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
 const BOT_TOKEN = process.env.BOT_TOKEN;
+const passport = require("passport");
+const BnetStrategy = require("passport-bnet").Strategy;
 const DISCORD_GUILD_ID = "712008432944939182";
 app.use(
   cors({
@@ -72,6 +74,45 @@ const Boosting = sequelize.define("Boosting", {
 
 // Sync User model with database
 sequelize.sync();
+
+// Bnet auth
+
+passport.use(
+  new BnetStrategy(
+    {
+      clientID: process.env.BNET_ID,
+      clientSecret: process.env.BNET_SECRET,
+      callbackURL: "/auth/bnet/callback",
+      region: "us",
+    },
+    (accessToken, refreshToken, profile, done) => {
+      // handle user authentication and profile data
+      // call done() with the authenticated user object
+    }
+  )
+);
+
+app.get("/auth/bnet", passport.authenticate("bnet"));
+
+app.get(
+  "/auth/bnet/callback",
+  passport.authenticate("bnet", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+  })
+);
+
+app.get(
+  "/auth/bnet/callback",
+  passport.authenticate("bnet", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+  }),
+  (req, res) => {
+    // redirect the user back to the React client with the authenticated user data
+    res.redirect(`/user/${req.user.id}`);
+  }
+);
 
 // Register user
 app.post(
