@@ -99,14 +99,6 @@ app.get(
   passport.authenticate("bnet", {
     successRedirect: "/",
     failureRedirect: "/login",
-  })
-);
-
-app.get(
-  "/auth/bnet/callback",
-  passport.authenticate("bnet", {
-    successRedirect: "/",
-    failureRedirect: "/login",
   }),
   (req, res) => {
     // redirect the user back to the React client with the authenticated user data
