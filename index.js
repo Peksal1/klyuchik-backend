@@ -90,8 +90,9 @@ passport.use(
       callbackURL: "/auth/bnet/callback",
       region: "eu",
     },
+
     (accessToken, refreshToken, profile, done) => {
-      done(null, user);
+      done(null);
     }
   )
 );
