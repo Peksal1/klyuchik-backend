@@ -83,11 +83,20 @@ passport.use(
       clientID: process.env.BNET_ID,
       clientSecret: process.env.BNET_SECRET,
       callbackURL: "/auth/bnet/callback",
-      region: "us",
+      region: "eu",
     },
     (accessToken, refreshToken, profile, done) => {
-      // handle user authentication and profile data
-      // call done() with the authenticated user object
+      // Find or create the user based on the Bnet profile data
+      User.findOrCreate({
+        where: { bnetId: profile.id },
+        defaults: {
+          name: profile.displayName,
+          role: "user",
+        },
+      }).then(([user, created]) => {
+        // Call done with the authenticated user object
+        done(null, user);
+      });
     }
   )
 );
@@ -102,7 +111,7 @@ app.get(
   }),
   (req, res) => {
     // redirect the user back to the React client with the authenticated user data
-    res.redirect(`/user/${req.user.id}`);
+    res.redirect(`https://www.klyuchik.net/user/${req.user.id}`);
   }
 );
 
