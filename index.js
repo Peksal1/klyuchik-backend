@@ -92,6 +92,7 @@ passport.use(
     },
 
     (accessToken, refreshToken, profile, done) => {
+      localStorage.setItem("bnetToken", accessToken);
       done(null);
     }
   )
