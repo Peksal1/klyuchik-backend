@@ -32,6 +32,11 @@ const User = sequelize.define("User", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  bnetId: {
+    type: Sequelize.DECIMAL,
+    allowNull: false,
+    defaultValue: null,
+  },
   email: {
     type: Sequelize.STRING,
     allowNull: false,
