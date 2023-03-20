@@ -91,8 +91,7 @@ passport.use(
       region: "eu",
     },
     (accessToken, refreshToken, profile, done) => {
-      // Find or create the user based on the Bnet profile data
-      // Call done with the authenticated user object
+      done(null, user);
     }
   )
 );
@@ -109,7 +108,7 @@ app.get(
     localStorage.setItem("bnetToken", req.user.token);
 
     // Redirect the user back to the React client without query parameters
-    res.redirect("https://www.klyuchik.net/user");
+    res.redirect("https://www.klyuchik.net/");
   }
 );
 
