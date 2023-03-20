@@ -16,6 +16,7 @@ const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&real
 const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const passport = require("passport");
+const cookieParser = require("cookie-parser");
 const BnetStrategy = require("passport-bnet").Strategy;
 const DISCORD_GUILD_ID = "712008432944939182";
 app.use(
@@ -77,9 +78,6 @@ const Boosting = sequelize.define("Boosting", {
   },
 });
 
-// Sync User model with database
-sequelize.sync();
-
 // Bnet auth
 
 passport.use(
@@ -92,11 +90,20 @@ passport.use(
     },
 
     (accessToken, refreshToken, profile, done) => {
-      localStorage.setItem("bnetToken", accessToken);
-      done(null);
+      done(null, { accessToken }); // pass accessToken to serializeUser
     }
   )
 );
+
+passport.serializeUser((user, done) => {
+  done(null, user.accessToken); // store accessToken in cookie
+});
+
+passport.deserializeUser((accessToken, done) => {
+  done(null, { accessToken }); // retrieve accessToken from cookie
+});
+
+app.use(cookieParser());
 
 app.get("/auth/bnet", passport.authenticate("bnet"));
 
@@ -106,9 +113,6 @@ app.get(
     failureRedirect: "/login",
   }),
   (req, res) => {
-    // Save the user's access token in local storage
-    localStorage.setItem("bnetToken", req.user.token);
-
     // Redirect the user back to the React client without query parameters
     res.redirect("https://www.klyuchik.net/");
   }
