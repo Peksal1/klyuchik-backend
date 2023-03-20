@@ -34,7 +34,8 @@ const User = sequelize.define("User", {
   },
   bnetId: {
     type: Sequelize.DECIMAL,
-    allowNull: false,
+    allowNull: true,
+    unique: true,
     defaultValue: null,
   },
   email: {
