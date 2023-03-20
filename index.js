@@ -36,7 +36,6 @@ const User = sequelize.define("User", {
     type: Sequelize.DECIMAL,
     allowNull: true,
     unique: true,
-    defaultValue: null,
   },
   email: {
     type: Sequelize.STRING,
