@@ -126,6 +126,41 @@ app.get(
     res.redirect("https://www.klyuchik.net/");
   }
 );
+//bnet profile
+app.get("/profile", async (req, res) => {
+  try {
+    const accessToken = req.cookies["connect.sid"]; // retrieve accessToken from cookie
+    const user = await getUser(accessToken);
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to get profile information" });
+  }
+});
+
+async function getUser(accessToken) {
+  return new Promise((resolve, reject) => {
+    const strategy = new BnetStrategy(
+      {
+        clientID: process.env.BNET_ID,
+        clientSecret: process.env.BNET_SECRET,
+        callbackURL: "/auth/bnet/callback",
+        region: "eu",
+      },
+      (accessToken, refreshToken, profile, done) => {
+        done(null, profile);
+      }
+    );
+
+    strategy.userProfile(accessToken, (err, profile) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(profile);
+      }
+    });
+  });
+}
 
 // Register user
 app.post(
