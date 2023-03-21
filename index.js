@@ -133,7 +133,7 @@ app.get("/bnet/profile", async (req, res) => {
   console.log(req.cookies);
   // Make API call to retrieve user's Battle.net profile information
   const response = await fetch.default(
-    `https://eu.api.blizzard.com/profile/user/wow?access_token=${accessToken}`
+    `https://eu.api.blizzard.com/profile/user/wow?namespace=profile-eu&locale=ru_RU&access_token=${accessToken}`
   );
   if (!response.ok) {
     throw new Error(
