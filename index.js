@@ -17,6 +17,7 @@ const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const session = require("express-session");
 const passport = require("passport");
+import fetch from "node-fetch";
 const cookieParser = require("cookie-parser");
 const BnetStrategy = require("passport-bnet").Strategy;
 const DISCORD_GUILD_ID = "712008432944939182";
@@ -131,11 +132,12 @@ app.get("/bnet/profile", async (req, res) => {
   const accessToken = req.cookies["connect.sid"];
 
   // Make API call to retrieve user's Battle.net profile information
-  const response = await axios.get(
+  const response = await fetch(
     `https://eu.api.blizzard.com/profile/user/wow?access_token=${accessToken}`
   );
-  console.log(response.data);
-  res.send(response.data);
+  const data = await response.json();
+  console.log(data);
+  res.send(data);
 });
 
 //bnet profile
