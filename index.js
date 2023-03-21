@@ -15,6 +15,7 @@ const REGION = "eu"; // or "us" for US servers
 const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&realm=${SERVER_NAME}&name=${GUILD_NAME}`;
 const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
 const BOT_TOKEN = process.env.BOT_TOKEN;
+const session = require("express-session");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const BnetStrategy = require("passport-bnet").Strategy;
@@ -77,6 +78,14 @@ const Boosting = sequelize.define("Boosting", {
     allowNull: false,
   },
 });
+
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 // Bnet auth
 
