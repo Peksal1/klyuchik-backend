@@ -79,9 +79,6 @@ const Boosting = sequelize.define("Boosting", {
   },
 });
 
-app.use(passport.initialize());
-app.use(passport.session()); // Add this middleware
-
 app.use(
   session({
     secret: process.env.JWT_SECRET,
@@ -89,6 +86,9 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session()); // Add this middleware
 
 // Bnet auth
 
