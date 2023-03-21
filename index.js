@@ -134,7 +134,15 @@ app.get("/bnet/profile", async (req, res) => {
   const response = await fetch.default(
     `https://eu.api.blizzard.com/profile/user/wow?access_token=${accessToken}`
   );
-  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch Battle.net profile: ${response.statusText}`
+    );
+  }
+  const data = await response.json().catch((error) => {
+    console.error(error);
+    throw new Error("Failed to parse Battle.net profile JSON response");
+  });
   console.log(data);
   res.send(data);
 });
