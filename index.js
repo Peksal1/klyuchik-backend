@@ -130,6 +130,7 @@ app.get(
 app.get("/bnet/profile", async (req, res) => {
   const accessToken = req.cookies["connect.sid"];
   const fetch = await import("node-fetch");
+  console.log(accessToken);
   // Make API call to retrieve user's Battle.net profile information
   const response = await fetch.default(
     `https://eu.api.blizzard.com/profile/user/wow?access_token=${accessToken}`
