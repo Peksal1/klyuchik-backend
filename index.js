@@ -140,6 +140,7 @@ app.get("/bnet/profile", async (req, res) => {
       `Failed to fetch Battle.net profile: ${response.statusText}`
     );
   }
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Origin", "https://www.klyuchik.net");
   const data = await response.json().catch((error) => {
     console.error(error);
