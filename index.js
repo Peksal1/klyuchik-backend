@@ -127,7 +127,7 @@ app.get(
   }
 );
 
-app.get("/api/bnet/profile", async (req, res) => {
+app.get("/bnet/profile", async (req, res) => {
   const accessToken = req.cookies["connect.sid"];
 
   // Make API call to retrieve user's Battle.net profile information
