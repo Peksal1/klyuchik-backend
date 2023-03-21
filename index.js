@@ -126,6 +126,18 @@ app.get(
     res.redirect("https://www.klyuchik.net/");
   }
 );
+
+app.get("/api/bnet/profile", async (req, res) => {
+  const accessToken = req.cookies["connect.sid"];
+
+  // Make API call to retrieve user's Battle.net profile information
+  const response = await axios.get(
+    `https://eu.api.blizzard.com/profile/user/wow?access_token=${accessToken}`
+  );
+  console.log(response.data);
+  res.send(response.data);
+});
+
 //bnet profile
 app.get("/profile", async (req, res) => {
   try {
