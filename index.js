@@ -308,7 +308,7 @@ app.post("/logout", authenticateToken, async (req, res) => {
 // is streaming endpoint
 app.get("/is-streaming", async (req, res) => {
   const twitchApiEndpoint =
-    "https://api.twitch.tv/helix/streams?user_login=peksal1";
+    "https://api.twitch.tv/helix/streams?user_login=dafran";
   const twitchApiHeaders = {
     "Client-ID": TWITCH_CLIENT_ID,
   };
