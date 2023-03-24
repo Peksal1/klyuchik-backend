@@ -15,6 +15,8 @@ const REGION = "eu"; // or "us" for US servers
 const GUILD_API = `https://raider.io/api/v1/guilds/profile?region=${REGION}&realm=${SERVER_NAME}&name=${GUILD_NAME}`;
 const PLAYER_API = `https://raider.io/api/v1/characters/profile?region=${REGION}&realm=${SERVER_NAME}`;
 const BOT_TOKEN = process.env.BOT_TOKEN;
+const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
+const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
 const session = require("express-session");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
@@ -300,6 +302,30 @@ app.post("/logout", authenticateToken, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error logging out user" });
+  }
+});
+
+// is streaming endpoint
+app.get("/is-streaming", async (req, res) => {
+  const twitchApiEndpoint =
+    "https://api.twitch.tv/helix/streams?user_login=peksal1";
+  const twitchApiHeaders = {
+    "Client-ID": TWITCH_CLIENT_ID,
+  };
+
+  try {
+    const response = await fetch(twitchApiEndpoint, {
+      headers: twitchApiHeaders,
+    });
+    const data = await response.json();
+    if (data.data && data.data.length > 0) {
+      res.json({ isStreaming: true });
+    } else {
+      res.json({ isStreaming: false });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error checking Twitch stream status" });
   }
 });
 
