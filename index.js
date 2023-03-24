@@ -310,7 +310,7 @@ app.get("/is-streaming/:username", async (req, res) => {
   const twitchUsername = req.params.username;
   const twitchApiEndpoint = `https://api.twitch.tv/helix/streams?user_login=${twitchUsername}`;
   const twitchApiHeaders = {
-    "Client-ID": TWITCH_CLIENT_ID,
+    "Client-ID": `hba14lw9bsuh1nw9vjdmqpj8y983dn`,
   };
 
   try {
