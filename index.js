@@ -320,8 +320,10 @@ app.get("/is-streaming/:username", async (req, res) => {
     const data = await response.json();
     if (data.data && data.data.length > 0) {
       res.json({ isStreaming: true });
+      console.log(res);
     } else {
       res.json({ isStreaming: false });
+      console.log(res);
     }
   } catch (error) {
     console.error(error);
