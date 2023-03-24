@@ -309,15 +309,33 @@ app.post("/logout", authenticateToken, async (req, res) => {
 app.get("/is-streaming/:username", async (req, res) => {
   const twitchUsername = req.params.username;
   const twitchApiEndpoint = `https://api.twitch.tv/helix/streams?user_login=${twitchUsername}`;
-  const twitchApiHeaders = {
-    "Client-ID": `hba14lw9bsuh1nw9vjdmqpj8y983dn`,
-  };
+  const twitchClientId = TWITCH_CLIENT_ID;
+
+  // Fetch access token
+  const twitchAuthEndpoint = "https://id.twitch.tv/oauth2/token";
+  const twitchAuthBody = new URLSearchParams({
+    grant_type: "client_credentials",
+    client_id: twitchClientId,
+    client_secret: process.env.TWITCH_CLIENT_SECRET,
+  });
 
   try {
+    const authResponse = await fetch(twitchAuthEndpoint, {
+      method: "POST",
+      body: twitchAuthBody,
+    });
+    const authData = await authResponse.json();
+
+    // Make API request with access token
+    const twitchApiAuthHeaders = {
+      Authorization: `Bearer ${authData.access_token}`,
+      "Client-ID": twitchClientId,
+    };
     const response = await fetch(twitchApiEndpoint, {
-      headers: twitchApiHeaders,
+      headers: twitchApiAuthHeaders,
     });
     const data = await response.json();
+
     if (data.data && data.data.length > 0) {
       res.json({ isStreaming: true });
       console.log(data);
@@ -330,7 +348,6 @@ app.get("/is-streaming/:username", async (req, res) => {
     res.status(500).send({ error: "Error checking Twitch stream status" });
   }
 });
-
 // Endpoint to create Boosting
 app.post("/boosting", authenticateToken, async (req, res) => {
   // Check if user is admin
