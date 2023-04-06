@@ -71,6 +71,10 @@ const GuideCategory = sequelize.define("GuideCategory", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  tag: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
 });
 
 const Guide = sequelize.define("Guide", {
