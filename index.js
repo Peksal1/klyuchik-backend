@@ -61,6 +61,61 @@ const User = sequelize.define("User", {
   },
 });
 
+const GuideCategory = sequelize.define("GuideCategory", {
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
+const Guide = sequelize.define("Guide", {
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
+const GuideFeature = sequelize.define("GuideFeature", {
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
+const GuideImage = sequelize.define("GuideImage", {
+  url: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
+GuideCategory.hasMany(Guide);
+Guide.belongsTo(GuideCategory);
+
+Guide.hasMany(GuideFeature);
+GuideFeature.belongsTo(Guide);
+
+Guide.hasMany(GuideImage);
+GuideImage.belongsTo(Guide);
+
+GuideCategory.hasMany(GuideImage);
+GuideImage.belongsTo(GuideCategory);
+
 const Boosting = sequelize.define("Boosting", {
   price: {
     type: Sequelize.DECIMAL,
@@ -108,6 +163,142 @@ passport.use(
     }
   )
 );
+
+// Endpoint to create a new guide
+app.post("/guides", async (req, res) => {
+  try {
+    const { title, description, image, categoryId } = req.body;
+    const guide = await Guide.create({ title, description, image, categoryId });
+    res.status(201).send(guide);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to create guide" });
+  }
+});
+
+// Endpoint to get all guides
+app.get("/guides", async (req, res) => {
+  try {
+    const guides = await Guide.findAll({
+      include: [
+        {
+          model: GuideFeature,
+          include: [GuideImage],
+        },
+        GuideCategory,
+      ],
+    });
+    res.send(guides);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch guides" });
+  }
+});
+
+// Endpoint to create a new guide feature
+app.post("/guide-features", async (req, res) => {
+  try {
+    const { title, description, image, guideId } = req.body;
+    const guideFeature = await GuideFeature.create({
+      title,
+      description,
+      image,
+      guideId,
+    });
+    res.status(201).send(guideFeature);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to create guide feature" });
+  }
+});
+
+// Endpoint to get all guide features
+app.get("/guide-features", async (req, res) => {
+  try {
+    const guideFeatures = await GuideFeature.findAll({
+      include: [GuideImage, Guide],
+    });
+    res.send(guideFeatures);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch guide features" });
+  }
+});
+
+// Endpoint to create a new guide image
+app.post("/guide-images", async (req, res) => {
+  try {
+    const { url, altText, featureId } = req.body;
+    const guideImage = await GuideImage.create({ url, altText, featureId });
+    res.status(201).send(guideImage);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to create guide image" });
+  }
+});
+
+// Endpoint to get all guide images
+app.get("/guide-images", async (req, res) => {
+  try {
+    const guideImages = await GuideImage.findAll({
+      include: [GuideFeature],
+    });
+    res.send(guideImages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch guide images" });
+  }
+});
+
+// Endpoint to create a new guide category
+app.post("/guide-categories", async (req, res) => {
+  try {
+    const { name, description, image } = req.body;
+    const guideCategory = await GuideCategory.create({
+      name,
+      description,
+      image,
+    });
+    res.status(201).send(guideCategory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to create guide category" });
+  }
+});
+
+// Endpoint to get all guide categories
+app.get("/guide-categories", async (req, res) => {
+  try {
+    const categories = await GuideCategory.findAll({
+      include: [
+        {
+          model: Guide,
+          as: "guides",
+          include: [
+            {
+              model: GuideFeature,
+              as: "features",
+              include: [
+                {
+                  model: GuideImage,
+                  as: "images",
+                },
+              ],
+            },
+            {
+              model: GuideImage,
+              as: "images",
+            },
+          ],
+        },
+      ],
+    });
+    res.send(categories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to get guide categories" });
+  }
+});
 
 passport.serializeUser((user, done) => {
   done(null, user.accessToken); // store accessToken in cookie
